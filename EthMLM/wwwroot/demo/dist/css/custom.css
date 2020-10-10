@@ -1,0 +1,38 @@
+.wrapper .header-top[header-theme="light"] {
+
+    background: #272d36;
+
+}
+
+
+
+.navigation-main .nav-item {
+    position: relative;
+    border-bottom: 1px solid #fff;
+        border-bottom-color: rgb(255, 255, 255);
+}
+
+.navigation-main .nav-item:hover {
+    position: relative;
+	background-color: #008aff;
+  
+       
+}
+
+
+.wrapper .page-wrap .app-sidebar.colored .sidebar-content {
+    background-color: #272d36;
+}
+
+
+.wrapper .page-wrap .app-sidebar .sidebar-content .nav-container .navigation-main .nav-lavel {
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 1;
+    padding: 8px 20px 8px;
+    text-transform: capitalize;
+    visibility: visible;
+    width: 100%;
+    color: #008aff;
+    background: #333e52;
+}

@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/EthMLM/v16
+/.vs/EthMLM/config
+/EthMLM/bin/Debug/netcoreapp3.0
+/EthMLM/obj
+/EthMLM/Properties
+/.vs/EthMLM/DesignTimeBuild

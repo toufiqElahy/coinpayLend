@@ -1,0 +1,205 @@
+﻿
+
+<div class="container-fluid">
+    
+    <div class="page-header">
+        <div class="row align-items-end">
+            <div class="col-lg-8">
+                <div class="page-header-title">
+                    <i class="ik ik-plus-circle bg-dark"></i>
+                    <div class="d-inline">
+                        <h5> Wallet </h5>
+                        <span>(Metamask) Wallet</span>
+                    </div>
+                </div>
+                <br />
+                <div>
+                    @*<a id="pvPress" href="#" class="btn btn-warning"><i class="ik ik-plus-circle"></i> Create Address Using Private Key</a>*@
+
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h3>Ethereum Address</h3>
+
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Referer Address () </label>
+                    <input type="text" class="form-control" id="refid" name="refid" placeholder="Address" value="" required>
+                </div>
+                <div class="card-body p-0 table-border-style">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Wallet Address</th>
+
+                                    <th>total</th>
+                                    <th>Action</th>
+                                    <th>Level Price(ETH)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              
+                                <tr>
+                                    <th id="serial" scope="row">0</th>
+                                    <td id="pubkey"></td>
+                                    <td id="totalCoin" key=""></td>
+                                    <td>
+                                        <div id="connect">
+                                            <input type="button" id="cnt" pub="" value="Buy Level To Connect" />
+                                        </div>
+                                        <div id="elseif">
+                                            <a id="lnk" asp-action="Viewtree" asp-route-addr="" target="_blank" class="btn btn-primary">View Tree</a>
+                                            <a href="#" id="upgrade">Upgrade level </a>
+                                        </div>
+
+                                    </td>
+                                    <td id="prc">0</td>
+                                </tr>
+                                   
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<a href="#" id="hiddenLink" style="color:red" target="_blank">Message: </a>
+
+<script src="~/Scripts/StvoAbi.js"></script>
+<script type="text/javascript">
+     
+
+    ///////////
+
+    window.addEventListener('load', async () => {
+        //Modern dapp browsers...
+        if (window.ethereum) {
+            window.web3 = new Web3(ethereum);
+            try {
+                // Request account access if needed
+                await ethereum.enable();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        // Legacy dapp browsers...
+        else if (window.web3) {
+            window.web3 = new Web3(web3.currentProvider);
+        }
+        // Non-dapp browsers...
+        else {
+            console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+        }
+
+
+    });
+
+    
+    var provider1 = new ethers.providers.Web3Provider(web3.currentProvider);
+    var signer = provider1.getSigner();
+
+    $(function () {
+        $('#connect,#upgrade').on('click', async function () {
+            await sendtransaction();
+        })
+
+        var $refid = $('#refid');
+        var referrer = '@Context.Request.Query["refId"]'
+        if (referrer != '') {
+            contract.users(referrer).then((user) => {
+                    $refid.val(user.wallet);
+                });
+        } else {
+            contract.tempReferrerID().then((id) => {
+                contract.users(id).then((user) => {
+                    $refid.val(user.wallet);
+                });
+            });
+        }
+
+
+        fnc();
+    $('#connect').hide();
+    $('#elseif').hide();
+    var starPrce = 0;
+    var data = '0x';
+    async function fnc() {
+        
+        //let tx = await signer.sendTransaction(tx);
+        let getAddress = await signer.getAddress();
+        var id = await getIdbyAddress(getAddress);
+        $('#pubkey').html(getAddress);
+        $('#serial').html(id);
+        console.log(getAddress);
+        var val = await provider.getBalance(getAddress);
+        val = parseInt(val.toString()) / 10 ** 18;
+        $('#totalCoin').html(val);
+
+        var id = await getIdbyAddress(getAddress);
+        if (id == '0') {
+            $('#connect').show();
+            starPrce = await getStarPrice('1');
+            data = $('#refid').val();
+        } else {
+            
+            $('#elseif').show();
+            $('#lnk').attr('href', $('#lnk').attr('href') + getAddress);
+            var star = await starLevel(id);
+            
+            if (star == '7') {
+                $('#upgrade').html('All level done..');
+            } else {
+                starPrce = await getStarPrice(star);
+                $('#upgrade').html('Upgrade level to:' + star);
+            }
+            
+        }
+    $('#prc').html(starPrce);
+    }
+
+        
+        async function sendtransaction() {
+
+        
+
+	var transaction = {
+        to: ContractAddress,
+        value: ethers.utils.parseEther(starPrce),//'0x00',//
+        data: data
+	}
+
+	    var rslt = await signer.sendTransaction(transaction);
+        console.log("Receit: " + rslt);
+
+        $('#hiddenLink').attr('href', etherscanTx + rslt.hash);
+            //$('#hiddenLink').click();
+            document.getElementById("hiddenLink").click();
+            provider.waitForTransaction(rslt.hash).then(receipt => {//rslt.hash
+                        console.log('Transaction Mined: ' + receipt.transactionHash);
+               
+                window.location.reload();
+                    });
+
+
+    }
+
+
+    })
+
+    
+
+</script>

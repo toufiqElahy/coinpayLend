@@ -1,0 +1,179 @@
+﻿@model string
+
+
+    <div class="container-fluid">
+
+        <div class="page-header">
+            <div class="row align-items-end">
+                <div class="col-lg-8">
+                    <div class="page-header-title">
+                        <i class="ik ik-plus-circle bg-dark"></i>
+                        <div class="d-inline">
+                            <h5> Reports </h5>
+                            <span> Reports</span>
+                        </div>
+                    </div>
+                    <br />
+                    <div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="nav-item">
+            <a asp-action="LostETH" asp-route-ethAddr="@Model" class="btn btn-dark"><i class="ik ik-eye-off"></i><span>Lost ETH Reports</span> </a>
+            <a asp-action="Spendings" asp-route-ethAddr="@Model" class="btn btn-outline-dark"><i class="ik ik-gift"></i><span>Spendings ETH Reports</span> </a>
+        </div><br />
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-block">
+                        <h3>Reward As A Referrer</h3>
+
+                    </div>
+
+                    <div class="card-body p-0 table-border-style">
+                        <div class="table-responsive">
+                            <table class="table" id="referrer">
+                                <thead>
+                                    <tr>
+                                        <th>User Id</th>
+                                        <th>Introducer Id</th>
+
+                                        <th>Star Level</th>
+                                        <th>Amount</th>
+                                        <th>Fee</th>
+                                        <th>Date, Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-block">
+                        <h3>Reward As A  Indroducer</h3>
+
+                    </div>
+
+                    <div class="card-body p-0 table-border-style">
+                        <div class="table-responsive">
+                            <table class="table" id="introducer">
+                                <thead>
+                                    <tr>
+                                        <th>User Id</th>
+                                        <th>Referrer Id</th>
+
+                                        <th>Star Level</th>
+                                        <th>Amount</th>
+                                        <th>Fee</th>
+                                        <th>Date, Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+<script src="~/Scripts/StvoAbi.js"></script>
+<script type="text/javascript">
+    async function addRow(evnt) {
+        //console.log(evnt[0]);
+        var $tblRef = $('#referrer');
+        for(let i = 0; i < evnt.length; i++){
+            var obj = evnt[i].values;
+   console.log(obj._user.toString());
+           
+                $tblRef.append($('<tr>')
+                    .append($('<td>').append(await getAddressById(obj._user.toString())))
+                    .append($('<td>').append(obj._introducer.toString()))
+                        .append($('<td>').append(obj._star.toString()))
+                        .append($('<td>').append(ethers.utils.formatEther(obj._money.toString())))
+                    .append($('<td>').append(ethers.utils.formatEther(obj._fee.toString())))
+                    .append($('<td>').append(new Date(obj._time * 1000).toLocaleString()))
+                  )
+            
+}
+
+    }
+    //..................
+    async function addRow2(evnt) {
+        //console.log(evnt[0]);
+        var $tblIntr = $('#introducer');
+        for(let i = 0; i < evnt.length; i++){
+            var obj = evnt[i].values;
+   console.log(obj._user.toString());
+            
+                $tblIntr.append($('<tr>')
+                    .append($('<td>').append(await getAddressById(obj._user.toString())))
+                    .append($('<td>').append(obj._referrer.toString()))
+                        .append($('<td>').append(obj._star.toString()))
+                        .append($('<td>').append(ethers.utils.formatEther(obj._money.toString())))
+                        .append($('<td>').append(ethers.utils.formatEther(obj._fee.toString())))
+                    .append($('<td>').append(new Date(obj._time * 1000).toLocaleString()))
+                  )
+            
+}
+
+    }
+
+    //....................
+
+    var id;
+    $(function () {
+        //event Payment(uint indexed _user, uint indexed _referrer, uint indexed _introducer, uint _star, uint _money, uint _fee, uint _time);
+        fnc();
+    })
+    async function fnc() {
+        id = Number(await getIdbyAddress('@Model'));
+        let filterRef = contract.filters.Payment(null, id, null, null, null, null, null);
+        let filterIntr = contract.filters.Payment(null, null, id, null, null, null, null);
+        filterRef.fromBlock = 0;
+        filterIntr.fromBlock = 0;
+
+        let abi = [ "event Payment(uint indexed _user, uint indexed _referrer, uint indexed _introducer, uint _star, uint _money, uint _fee, uint _time)" ];
+let iface = new ethers.utils.Interface(abi);
+
+        var logPromise = provider.getLogs(filterRef);
+        logPromise.then(async function (logs) {
+    //console.log("Printing array of events:");
+    let events = logs.map((log) => iface.parseLog(log))
+    await addRow(events);
+    }).catch(function(err){
+        console.log(err);
+    });
+//.............
+        logPromise = provider.getLogs(filterIntr);
+        logPromise.then(async function (logs) {
+    //console.log("Printing array of events:");
+    let events = logs.map((log) => iface.parseLog(log))
+    await addRow2(events);
+    }).catch(function(err){
+        console.log(err);
+    });
+//.......
+
+    }
+
+
+</script>

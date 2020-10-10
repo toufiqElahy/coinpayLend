@@ -1,0 +1,22 @@
+﻿@model List<UserTicket>
+@{
+    ViewData["Title"] = "CoinPay.CR Affiliate Game";
+}
+
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h1>Ticket List</h1>
+                    <p class="lead">Tickets Bought By User:.</p>
+                    <div id="divContainer" style="text-align:center;">
+                        @foreach (var item in Model)
+                        {
+                            string c = (item.TicketNumber < 10) ? "0" : "";
+                            <a href="#" class="btn btn-primary m-2" id="buyTicket@(item.TicketNumber)" type="button">Tkt# @(c+ item.TicketNumber)</a><span>Total Bought: @item.TicketCount</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

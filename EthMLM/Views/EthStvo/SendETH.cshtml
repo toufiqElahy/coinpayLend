@@ -1,0 +1,141 @@
+﻿
+
+<div class="container-fluid">
+    <div class="page-header">
+
+
+        <div class="row align-items-end">
+            <div class="col-lg-8">
+                <div class="page-header-title">
+                    <i class="ik ik-minus-circle bg-dark"></i>
+                    <div class="d-inline">
+                        <h5> Send Coin </h5>
+                        <span>Send Ethereum (ETH) </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <nav class="breadcrumb-container" aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+
+                        <li class="breadcrumb-item">
+
+                        </li>
+
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!--Account Balance --><div class="row clearfix">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="widget bg-dark">
+                <div class="widget-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="state">
+                            <h6>Account Balance</h6>
+                           
+                        </div>
+                        <div class="icon">
+                            <i class="ik ik-file-text"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <!--Account Balance End -->
+
+
+
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card" style="min-height: 484px;">
+                <div class="card-header"><h3>Send (ETH)</h3></div>
+
+                <div class="card-body">
+
+                    @using (Html.BeginForm(FormMethod.Post, new { @class = "forms-sample" }))
+                    {
+                        <div style="color:red">@Html.Raw(TempData["msg"])</div>
+                      
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Ethereum Address (ETH) </label>
+                            <input type="text" class="form-control" id="addr" name="addr" placeholder="Address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Amount (ETH)</label>
+                            <input type="text" class="form-control" id="amnt" name="amnt" placeholder="Amount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputConfirmPassword1">Fee</label>
+                            <input type="text" class="form-control" id="feee" name="feee" placeholder="Estimated Fee" readonly="readonly">
+                        </div>
+
+                        @*<div class="form-group">
+                                <label for="exampleInputPassword1">Balance (ETH)</label>
+                                <input type="text" class="form-control" id="blnc" placeholder="" readonly="readonly">
+                            </div>*@
+                        <div class="form-group">
+
+                        </div>
+                        <button type="submit" class="btn btn-primary mr-2">Send</button>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
+<script>
+
+
+
+
+
+    $(function () {
+
+        $('#feee').val(0.01);
+
+        $.validator.addMethod('lessThanEqual', function(value, element, param) {
+    if (this.optional(element)) return true;
+            var i = parseFloat(value);
+            var j = parseFloat($(param).text());
+            i+=parseFloat($('#feee').val());
+            console.log(i + '   ' + j);
+            return i <= j;
+        }, "Amount must be less than Total (ETH)Balance");
+
+
+            $("form:last").validate({
+                rules: {
+                    amnt: {
+                        number: true,
+                        lessThanEqual: '#totalBlnc'
+                    }
+                }
+            });
+        })
+
+    //})
+
+
+
+
+</script>

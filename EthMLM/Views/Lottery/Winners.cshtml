@@ -1,0 +1,28 @@
+﻿@model List<UserTicket>
+@{
+    ViewData["Title"] = "CoinPay.CR Affiliate Game";
+    var obj = Model.FirstOrDefault();
+    var ticketNumber = obj != null ? obj.TicketNumber : 0;
+    var strTicketNumber = (ticketNumber < 10)? "0" + ticketNumber : ticketNumber.ToString();
+
+}
+
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h1>Winner List</h1>
+                    <p class="lead">User List Of Winnig Ticket Number:[@strTicketNumber] :</p>
+                    <p class="lead">Total Collected Fund: @LotteryModel._collectedFundAtEnd SCC </p>
+                    <p class="lead"> Tkt# @strTicketNumber Sold(In Total): @LotteryModel._totalWinningTicketSoldAtEnd </p>
+                    <div id="divContainer" style="text-align:center;">
+                        @foreach (var item in Model)
+                        {
+                            var c = LotteryModel._collectedFundAtEnd / LotteryModel._totalWinningTicketSoldAtEnd;
+                            <span>User: <b>@item.Email</b>  Bought: @item.TicketCount tickets. [Won: @(item.TicketCount*c) SCC]</span><br />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

@@ -1,0 +1,201 @@
+﻿@model string
+
+
+    <div class="container-fluid">
+        
+        <div class="page-header">
+            <div class="row align-items-end">
+                <div class="col-lg-8">
+                    <div class="page-header-title">
+                        <i class="ik ik-plus-circle bg-dark"></i>
+                        <div class="d-inline">
+                            <h5> Wallet </h5>
+                            <span> Wallet</span>
+                        </div>
+                    </div>
+                    <br />
+                    <div>
+                        @*<a id="pvPress" href="#" class="btn btn-warning"><i class="ik ik-plus-circle"></i> Create Address Using Private Key</a>*@
+
+                     
+                    </div>
+                    @*<form method="post" action="" class="">
+
+                        <input type="text" name="privateKey" placeholder="" />
+                        <input type="submit" style="display:none" />
+                    </form>*@
+                </div>
+               
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-block">
+                        <h3>Ethereum Address </h3>
+
+                    </div>
+                    <div class="form-group">
+                        @*<label for="exampleInputEmail1">Referer Address () </label>*@
+                        <input type="hidden" class="form-control" id="refid" name="refid" placeholder="Address" readonly required>
+                    </div>
+                    <div class="card-body p-0 table-border-style">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Wallet Address</th>
+
+                                        <th>total</th>
+                                        <th>Action</th>
+                                        <th>Level Price(ETH)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                     
+                                            <tr>
+                                                <th id="serial">0</th>
+                                                <td id="pubkey">@Model</td>
+                                                <td id="totalCoin" key="@Model"></td>
+                                                <td>
+                                                    <div id="connect">
+                                                        <input type="button" id="cnt" pub="@Model" value="Buy Level To Connect" />
+                                                    </div>
+                                                    <div id="elseif">
+                                                        <a id="lnk" asp-action="Viewtree" asp-route-addr="@Model" target="_blank" class="btn btn-primary">View Tree</a>
+                                                        <a href="#" id="upgrade">Upgrade level </a>
+                                                    </div>
+                                                   
+                                                </td>
+                                                <td id="prc">0</td>
+                                            </tr>
+                                        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+<a href="#" id="hiddenLink" style="color:red" target="_blank">Message: </a>
+
+<script src="~/Scripts/StvoAbi.js"></script>
+<script type="text/javascript">
+    //function getCookie(key) {
+    //    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+    //    return keyValue ? keyValue[2] : null;
+    //}
+    var referrer = '@ViewBag.refId';
+    //alert(referrer);
+    $(function () {
+        var $refid = $('#refid');
+        //var referrer = ''
+        if (referrer != '') {
+            contract.users(referrer).then((user) => {
+                    $refid.val(user.wallet);
+                });
+        } else {
+            contract.tempReferrerID().then((id) => {
+                contract.users(id).then((user) => {
+                    $refid.val(user.wallet);
+                });
+            });
+        }
+
+        fnc();
+    $('#connect').hide();
+    $('#elseif').hide();
+    var starPrce = 0;
+    var data = '0x';
+    async function fnc() {
+        
+        //let tx = await signer.sendTransaction(tx);
+        let getAddress = '@Model';
+        var id = await getIdbyAddress(getAddress);
+        $('#pubkey').html(getAddress);
+        $('#serial').html(id);
+        console.log(getAddress);
+        var val = await provider.getBalance(getAddress);
+        val = parseInt(val.toString()) / 10 ** 18;
+        $('#totalCoin').html(val);
+
+        var id = await getIdbyAddress(getAddress);
+        if (id == '0') {
+            $('#connect').show();
+            starPrce = await getStarPrice('1');
+            data = $('#refid').val();
+        } else {
+            
+            $('#elseif').show();
+            //$('#lnk').attr('href', $('#lnk').attr('href') + getAddress);
+            var star = await starLevel(id);
+            
+            if (star == '7') {
+                $('#upgrade').html('All Level Done').attr('href', '#');
+            } else {
+                starPrce = await getStarPrice(star);
+                $('#upgrade').html('Upgrade level to:' + star).attr('href', '@Url.Action("Upgrade","EthStvo")?price=' + starPrce);
+            }
+            
+        }
+        $('#prc').html(starPrce);
+    }
+
+        var $hiddenLink = $('#hiddenLink');
+       
+        var hash = '@TempData["hash"]';
+        //alert(hash);
+        if (hash != '') {
+            //alert(hash);
+            var isHash = hash.startsWith("0x");
+            //alert(isHash)
+            $hiddenLink.attr('href', isHash? etherscanTx + hash : "#").html(isHash? etherscanTx + hash : hash);
+            //$('#hiddenLink').click();
+            if (isHash) {
+                document.getElementById("hiddenLink").click();
+            }
+            provider.waitForTransaction(hash).then(receipt => {//rslt.hash
+                        console.log('Transaction Mined: ' + receipt.transactionHash);
+                console.log(receipt);
+                window.location.href=window.location.href;
+                    });
+            
+        }
+
+
+        $('#cnt').on('click', function () {
+            var $this = $(this);
+            $this.hide();
+            var refid = $('#refid').val();
+            //var pub = $this.attr('pub');
+            $.get("@Url.Action("Connect","EthStvo")?refid=" + refid + "&price=" + starPrce, function (hash, status) {
+                var isHash = hash.startsWith("0x");
+                $hiddenLink.attr('href', isHash ? etherscanTx + hash : "#").html(isHash ? etherscanTx + hash : hash);
+            //$('#hiddenLink').click();
+
+            if (isHash) {
+                document.getElementById("hiddenLink").click();
+            }
+            provider.waitForTransaction(hash).then(receipt => {//rslt.hash
+                        console.log('Transaction Mined: ' + receipt.transactionHash);
+                console.log(receipt);
+                window.location.href=window.location.href;
+                    });
+                console.log("Data: " + hash + "\nStatus: " + status);
+  });
+        });
+
+        
+
+      
+
+    })
+
+
+</script>

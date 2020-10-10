@@ -1,0 +1,27 @@
+﻿@model List<Ticket>
+@{
+    ViewData["Title"] = "CoinPay.CR Affiliate Game";
+}
+
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h1>Buy A Ticket</h1>
+                    <p class="lead">Each ticket is only 5 SCC. At current prices, that's ~$<span id="ticketPrice"></span>.</p>
+                    <div id="divContainer" style="text-align:center;">
+                        @foreach (var item in Model)
+                        {
+                            if (item.IsLocked == false)
+                            {
+                                string c = (item.Number < 10) ? "0" : "";
+                                <a asp-action="BuyTicket" asp-route-number="@item.Number" class="btn btn-primary m-2" id="buyTicket@(item.Number)" type="button">Tkt# @(c+ item.Number)</a><span>Available: @item.Available</span>
+
+                            }
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

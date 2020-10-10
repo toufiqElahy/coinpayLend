@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewData["Title"] = "Viewtree";
+    Layout = null;
+}
+
+<h1 id="load">Loading...</h1>
+<link href="~/tree/jquery.orgchart.css" rel="stylesheet" />
+<input id="show" style="display:none" value="show tree" type="button" />
+<div id="orgChart"></div>
+
+<script src="~/tree/jquery-1.11.1.min.js"></script>
+<script src="~/js/web3.min.js"></script>
+
+<script src="~/nodemodules/ethers/dist/ethers.js"></script>
+
+
+<script src="~/tree/jquery.orgchart.js"></script>
+<script src="~/Scripts/StvoAbi.js"></script>
+<script>
+    var testData = [];
+
+    $(function () {
+        //alert(getIdbyAddress(addr));
+        implement();
+        async function implement() {
+            var addr = '@Context.Request.Query["addr"]';
+            var id = await getIdbyAddress(addr);
+            testData.push({ id: id, name: addr+'('+id+')', parent: 0 });
+
+            var temp = [id];
+          
+            for (var i = 0; i < temp.length; i++) {
+                var id = temp[i];
+                var addresses = await contract.viewUserReferrals(id);
+                    var ids = await idsByReferrals(addresses);
+                console.log(ids);
+
+                    for (var j = 0; j < ids.length; j++) {
+                        testData.push({ id: ids[j], name:addresses[j].substring(0, 7)+'...('+ids[j]+')' , parent: id });
+                        temp.push(ids[j]);
+                    }
+                    if (i < temp.length) {
+                    console.log('done...');
+                    $('#load').hide();
+                    $('#show').click();
+                    }
+                }
+
+            //}
+
+
+        }
+
+
+        $('#show').on('click', function () {
+            org_chart = $('#orgChart').orgChart({
+    data: testData, // your data
+    //showControls: true, // display add or remove node button.
+    //allowEdit: true, // click the node's title to edit
+    //onAddNode: function(node){},
+    //onDeleteNode: function(node){},
+    //onClickNode: function(node){},
+    //newNodeText: 'Add Child' // text of add button
+            });
+
+        })
+
+
+});
+</script>
