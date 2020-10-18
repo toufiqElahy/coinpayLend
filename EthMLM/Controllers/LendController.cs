@@ -20,7 +20,8 @@ namespace EthMLM.Controllers
             var userWallet = UserWalletModel._userWallet.FirstOrDefault(x=>x.Email==email);
             if (userWallet == null)
             {
-                UserWalletModel._userWallet.Add(new UserWallet { Email = email });
+                userWallet = new UserWallet { Email = email };
+                UserWalletModel._userWallet.Add(userWallet);
             }
             return View(userWallet);
         }

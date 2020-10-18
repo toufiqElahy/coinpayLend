@@ -2,11 +2,9 @@
   <MonoDevelop.Ide.ItemProperties.EthMLM PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="EthMLM/Controllers/LendController.cs" Line="170" Column="103" />
-      <File FileName="EthMLM/Views/Lend/LoanHistory.cshtml" Line="1" Column="1" />
-      <File FileName="EthMLM/Views/Lend/LendHistory.cshtml" Line="12" Column="35" />
-      <File FileName="EthMLM/Views/Shared/_SideMenu.cshtml" Line="41" Column="87" />
-      <File FileName="EthMLM/Views/Lend/OrderHistory.cshtml" Line="134" Column="83" />
+      <File FileName="EthMLM/Controllers/LendController.cs" Line="23" Column="17" />
+      <File FileName="EthMLM/Views/Lend/Index.cshtml" Line="31" Column="30" />
+      <File FileName="EthMLM/Models/LoanModel.cs" Line="26" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -14,13 +12,13 @@
           <Node name="EthMLM" expanded="True">
             <Node name="EthMLM" expanded="True">
               <Node name="Dependencies" expanded="True" />
-              <Node name="Controllers" expanded="True" />
+              <Node name="Controllers" expanded="True">
+                <Node name="LendController.cs" selected="True" />
+              </Node>
               <Node name="Models" expanded="True" />
               <Node name="Views" expanded="True">
                 <Node name="Lend" expanded="True" />
-                <Node name="Shared" expanded="True">
-                  <Node name="_SideMenu.cshtml" selected="True" />
-                </Node>
+                <Node name="Shared" expanded="True" />
               </Node>
             </Node>
           </Node>
