@@ -1,0 +1,155 @@
+@model ICollection<dynamic>
+
+<div class="container-fluid">
+    <div class="page-header">
+
+        <div class="row align-items-end">
+            <div class="col-lg-8">
+                <div class="page-header-title">
+                    <i class="ik ik-file-text bg-dark"></i>
+                    <div class="d-inline">
+                        <h5> Transactions (GVCH)</h5>
+                        <span>Gravity Cash Transactions History</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <nav class="breadcrumb-container" aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+
+                        <li class="breadcrumb-item">
+
+                        </li>
+
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!--Account Balance --><div class="row clearfix">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="widget bg-dark">
+                <div class="widget-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="state">
+                            <h6>Account Balance</h6>
+                            
+                        </div>
+                        <div class="icon">
+                            <i class="ik ik-file-text"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <!--Account Balance End -->
+
+
+
+
+
+
+
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h3>GVCH Transactions</h3>
+                </div>
+                
+
+                @{
+                    string[] publicKeys = ViewBag.publicKeys;
+                    int i = 0;
+                }
+
+
+                <div class="card-body">
+                    <div class="dt-responsive">
+                        <table id="table" class="table table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>SN</th>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Address</th>
+                                    <th>Amount (GVCH)</th>
+                                    <th>Fee(GVCH)</th>
+
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    i++;
+
+                                    var isFromAddr = publicKeys.Any(x => x == item.FromKey);
+
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@item.CreationDate.ToLocalTime()</td>
+                                        <td class="text-left">
+                                            @if (item.Status == "Pending")
+                                            {
+                                                <span class="badge badge-pill badge-primary">Processed</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-pill badge-@(isFromAddr ? "danger" : "success")">@(isFromAddr ? "Send" : "Receive")</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.Status == "Success")
+                                            {
+                                                <a href="/Admin/Hash?hash=@item.HashHex"> @(isFromAddr ? item.ToKey : item.FromKey)</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="#">@(isFromAddr ? item.ToKey : item.FromKey)</a>
+                                            }
+
+                                        </td>
+                                        <td class="text-right">@item.CoinAmount</td>
+                                        <td class="text-right">@item.FeeInCoinAmount</td>
+                                        <td class="text-right">
+                                            @if (item.Status == "Success")
+                                            {
+                                                <button type="button" class="btn btn-outline-success">Confirmed</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="btn btn-outline-secondary btn-rounded">
+                                                    Unconfirmed
+                                                </button>
+                                            }
+
+                                        </td>
+                                    </tr>
+                                }
+
+
+
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Language - -->
+        </div>
+    </div>
+</div>

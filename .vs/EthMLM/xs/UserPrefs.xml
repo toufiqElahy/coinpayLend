@@ -1,16 +1,24 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{24F62128-FB1D-4E95-9385-4DB47A5C854E}|Default">
   <MonoDevelop.Ide.ItemProperties.EthMLM PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.Workbench>
+    <Files>
+      <File FileName="EthMLM/Views/Lend/BorrowerForm.cshtml" Line="95" Column="49" />
+      <File FileName="EthMLM/Views/Lend/Index.cshtml" Line="82" Column="54" />
+      <File FileName="EthMLM/Controllers/LendController.cs" Line="38" Column="31" />
+      <File FileName="EthMLM/Models/LoanModel.cs" Line="21" Column="21" />
+    </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="EthMLM" expanded="True">
             <Node name="EthMLM" expanded="True">
               <Node name="Dependencies" expanded="True" />
-              <Node name="Controllers" expanded="True">
-                <Node name="LendController.cs" selected="True" />
-              </Node>
+              <Node name="Controllers" expanded="True" />
+              <Node name="Models" expanded="True" />
               <Node name="Views" expanded="True">
+                <Node name="Lend" expanded="True">
+                  <Node name="BorrowerForm.cshtml" selected="True" />
+                </Node>
                 <Node name="Shared" expanded="True" />
               </Node>
             </Node>

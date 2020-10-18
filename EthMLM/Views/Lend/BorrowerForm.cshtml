@@ -1,0 +1,188 @@
+
+
+<div class="container-fluid">
+    <div class="page-header">
+
+
+        <div class="row align-items-end">
+            <div class="col-lg-8">
+                <div class="page-header-title">
+                    <i class="ik ik-minus-circle bg-dark"></i>
+                    <div class="d-inline">
+                        <h5> Crypto Loans </h5>
+                        <span>Get a loan secured by your crypto assets. Guaranteed approval. </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <nav class="breadcrumb-container" aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+
+                        <li class="breadcrumb-item">
+
+                        </li>
+
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!--Account Balance --><div class="row clearfix">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="widget bg-dark">
+                <div class="widget-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="state">
+                            <h6>Currently Loanable Coins: USDT</h6>
+                            
+                        </div>
+                        <div class="icon">
+                            <i class="ik ik-file-text"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <!--Account Balance End -->
+
+
+
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card" style="min-height: 484px;">
+                <div class="card-header"><h3>Borrow Form</h3></div>
+
+                <div class="card-body">
+
+                    @using (Html.BeginForm(FormMethod.Post, new { @class = "forms-sample" }))
+                    {
+                        <div style="color:red">@Html.Raw(TempData["msg"])</div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">I want to borrow (USD)</label>
+                            <input type="text" class="form-control" id="usd" name="usd" placeholder="How Many USD" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="coin">Select Coin to Mortgage</label>
+                            <select class="form-control" id="coin" name="coin">
+                                <option value="BTC" selected>BTC</option>
+                                <option value="ETH">ETH</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">
+                                Collateral Rate(5-25%)
+                            </label>
+                            <input type="number" min="5" max="25" class="form-control" id="cRate" name="cRate" placeholder="Collateral Rate(5-25%)" value="25">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">
+                                Collateral Amount
+                            </label>
+                            <input type="text" class="form-control" id="amnt" name="amnt" placeholder="Amount" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputConfirmPassword1">Loan Term(days)</label>
+                            <input type="number" min="7" class="form-control" id="day" name="day" placeholder="How many Days" value="15">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">
+                                Interest Rate(%)
+                            </label>
+                            <input type="number" min="1" class="form-control" id="iRate" name="iRate" placeholder="Interest Rate(%)" value="3">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Repay Amount(USD)</label>
+                            <input type="text" class="form-control" id="rpay" name="rpay" placeholder="" readonly="readonly">
+                        </div>
+                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
+<script>
+
+
+    //$('#addrHolder').on('change',async function () {
+    //    var $this = $(this);
+    //    var addr = $this.val();
+    //    var val = await contract.balanceOf(addr);
+    //    val = parseInt(val.toString()) / 10 ** 18;
+    //    $('#blnc').val(val);
+    //})
+
+
+    $('#usd,#iRate').on('change keyup', function () {
+        var val = parseFloat($('#iRate').val());
+        val = val / 100;
+        var $val = parseFloat($('#usd').val());
+        $('#rpay').val($val + ($val * val));
+
+
+        })
+
+    
+
+
+    $(function () {
+
+        $('#feee').val(0.01);
+
+        //$('#addrHolder').change();
+        //var totalCoins = totalCoin;
+
+        //$.validator.addMethod('lessThanEqual', function (value, param) {
+        //    totalCoin = $(param).text();
+        //    console.log(totalCoin);
+        //    return parseFloat(value + $('#feee').val()) <= parseFloat(totalCoin);
+        //}, "Amount must be less than " + $(param).text());
+
+
+        $.validator.addMethod('lessThanEqual', function(value, element, param) {
+    if (this.optional(element)) return true;
+            var i = parseFloat(value);
+            var j = parseFloat($(param).text());
+            i+=parseFloat($('#feee').val());
+            console.log(i + '   ' + j);
+            return i <= j;
+        }, "Amount must be less than Total (GVCH)Balance");
+
+
+            $("form:last").validate({
+                rules: {
+                    amnt: {
+                        number: true,
+                        lessThanEqual: '#totalBlnc'
+                    }
+                }
+            });
+        })
+
+    //})
+
+
+
+
+</script>

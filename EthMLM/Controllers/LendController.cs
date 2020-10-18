@@ -16,6 +16,39 @@ namespace EthMLM.Controllers
     {
         public IActionResult Index()
         {
+            string email = User.Identity.Name;
+            var userWallet = UserWalletModel._userWallet.FirstOrDefault(x=>x.Email==email);
+            if (userWallet == null)
+            {
+                UserWalletModel._userWallet.Add(new UserWallet { Email = email });
+            }
+            return View(userWallet);
+        }
+        [HttpPost]
+        public IActionResult Index(string coin,decimal amnt)
+        {
+            string email = User.Identity.Name;
+            var userWallet = UserWalletModel._userWallet.FirstOrDefault(x => x.Email == email);
+            if (coin == "BTC")
+            {
+                userWallet.BTC += amnt;
+            }
+            else if (coin == "ETH")
+            {
+                userWallet.ETH += amnt;
+            }
+            else
+            {
+                userWallet.USD += amnt;
+            }
+            return View(userWallet);
+        }
+        public IActionResult Loan()
+        {
+            return View(LotteryModel._tickets);
+        }
+        public IActionResult LoanHistory()
+        {
             return View(LotteryModel._tickets);
         }
         public IActionResult BuyTicket(int number)
@@ -41,16 +74,13 @@ namespace EthMLM.Controllers
             }
             return RedirectToAction("Index");
         }
-        public IActionResult UserTickets()
+        public IActionResult BorrowerForm()
         {
             return View(LotteryModel._userTicket.Where(x=>x.Email==User.Identity.Name).ToList());
         }
-        public IActionResult SetWinner()
-        {
-            return View();
-        }
+        
         [HttpPost]
-        public IActionResult SetWinner(int luckyNumber)
+        public IActionResult Loan(int luckyNumber)
         {
             var ticket = LotteryModel._tickets.First(x => x.Number == luckyNumber);
             LotteryModel._totalWinningTicketSoldAtEnd = 100 - ticket.Available;

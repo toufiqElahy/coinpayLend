@@ -31,7 +31,7 @@ namespace EthMLM
 			//services.AddDbContext<ApplicationDbContext>(options =>
 			//	options.UseSqlServer(
 			//		Configuration.GetConnectionString("DefaultConnection")));
-			services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(databaseName: "EthMLM"));
+			services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(databaseName: "EthMLM1"));
 			services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 			services.AddControllersWithViews().AddRazorRuntimeCompilation();

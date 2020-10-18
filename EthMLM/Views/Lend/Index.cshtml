@@ -1,27 +1,137 @@
-﻿@model List<Ticket>
+﻿@model UserWallet
 @{
     ViewData["Title"] = "CoinPay.CR Affiliate Game";
 }
 
-    <section id="about">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <h1>Buy A Ticket</h1>
-                    <p class="lead">Each ticket is only 5 SCC. At current prices, that's ~$<span id="ticketPrice"></span>.</p>
-                    <div id="divContainer" style="text-align:center;">
-                        @foreach (var item in Model)
-                        {
-                            if (item.IsLocked == false)
-                            {
-                                string c = (item.Number < 10) ? "0" : "";
-                                <a asp-action="BuyTicket" asp-route-number="@item.Number" class="btn btn-primary m-2" id="buyTicket@(item.Number)" type="button">Tkt# @(c+ item.Number)</a><span>Available: @item.Available</span>
 
-                            }
 
-                        }
+    <div class="container-fluid">
+        <div class="page-header">
+
+
+            <div class="row align-items-end">
+                <div class="col-lg-8">
+                    <div class="page-header-title">
+                        <i class="ik ik-minus-circle bg-dark"></i>
+                        <div class="d-inline">
+                            <h5> User Balance </h5>
+                            <span>Balance Of Each Coin </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <nav class="breadcrumb-container" aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+
+                            <li class="breadcrumb-item">
+                                
+                            </li>
+                            
+
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!--Account Balance --><div class="row clearfix">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="widget bg-dark">
+                    <div class="widget-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="state">
+                                <h6>Account Balance</h6>
+
+                            </div>
+                            <div class="icon">
+                                <i class="ik ik-file-text"></i>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
+
         </div>
-    </section>
+
+        <!--Account Balance End -->
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card" style="">
+                    <div class="card-header"><h3>Coin List</h3></div>
+
+                    <div class="card-body">
+
+
+
+                            <div class="">
+                                <label for="amnt">Bitcoin Amount:</label>
+                                <span>@Model.BTC BTC</span>
+                            </div>
+
+                            <div class="">
+                                <label for="amnt">Ethereum Amount:</label>
+                                <span>@Model.ETH ETH</span>
+                            </div>
+                            <div class="">
+                                <label for="amnt">USD Amount:</label>
+                                <span>@Model.USD USD</span>
+                            </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card" style="min-height: 484px;">
+                    <div class="card-header"><h3>Add Coin</h3></div>
+
+                    <div class="card-body">
+
+                        @using (Html.BeginForm(FormMethod.Post, new { @class = "forms-sample" }))
+                        {
+                            <div style="color:red">@Html.Raw(TempData["msg"])</div>
+
+
+                            <div class="form-group">
+                                <label for="coin">Coin</label>
+                                <select class="form-control" id="coin" name="coin">
+                                    <option value="BTC" selected>BTC</option>
+                                    <option value="ETH">ETH</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="amnt">Amount</label>
+                                <input type="text" class="form-control" id="amnt" name="amnt" placeholder="Amount" required>
+                            </div>
+
+                            <div class="form-group">
+
+                            </div>
+                            <button type="submit" class="btn btn-primary mr-2">Add</button>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+
