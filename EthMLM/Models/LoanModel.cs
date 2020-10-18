@@ -6,12 +6,19 @@ using System.Threading.Tasks;
 
 namespace EthMLM.Models
 {
-	public class Tickets
+	public class Loan
 	{
-		public int Number { get; set; }
-		public int Available { get; set; } = 100;//each number 100 tickets
-		public string Users { get; set; } = "";//abc@mailcom,avd@gmain.edu ....email
-		public bool IsLocked { get; set; } = false;
+		public decimal usd{ get; set; }//borrowed usd
+		public string coin { get; set; }
+		public int cRate { get; set; } //collateral rate
+		public decimal amnt { get; set; } //collateral amount
+		public int days { get; set; }
+		public int iRate { get; set; } //interest rate
+		public decimal rPay { get; set; } //repay usd
+		public DateTime date { get; set; } = DateTime.UtcNow;
+		public string Email { get; set; }
+		public string LenderEmail { get; set; } = "";
+		public string status { get; set; } = "Pending";
 	}
 	public class UserWallet
 	{
@@ -26,7 +33,7 @@ namespace EthMLM.Models
 	}
 		public static class LoanModel
 	{
-		public static List<Ticket> _tickets= InitTickets();
+		public static List<Loan> _loans= new List<Loan>();
 		public static List<UserTicket> _userTicket = new List<UserTicket>();
 		public static List<UserTicket> _winnerTicketAtEnd = new List<UserTicket>();//
 		public static int _collectedFund =0 ;
@@ -46,7 +53,6 @@ namespace EthMLM.Models
 
 		public static void Refresh()
 		{
-			_tickets= InitTickets();
 			_userTicket = new List<UserTicket>();
 			_collectedFundAtEnd = _collectedFund;
 			_collectedFund = 0;

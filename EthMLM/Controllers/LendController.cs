@@ -76,27 +76,150 @@ namespace EthMLM.Controllers
         }
         public IActionResult BorrowerForm()
         {
-            return View(LotteryModel._userTicket.Where(x=>x.Email==User.Identity.Name).ToList());
+            return View();
         }
-        
         [HttpPost]
-        public IActionResult Loan(int luckyNumber)
+        public IActionResult BorrowerForm(Loan mloan)
         {
-            var ticket = LotteryModel._tickets.First(x => x.Number == luckyNumber);
-            LotteryModel._totalWinningTicketSoldAtEnd = 100 - ticket.Available;
-            //get winners
-            LotteryModel._winnerTicketAtEnd = LotteryModel._userTicket.Where(x => x.TicketNumber == luckyNumber).ToList();
-            //reset
-            LotteryModel.Refresh();
-            return RedirectToAction("Winners");
+            string email = User.Identity.Name;
+            mloan.Email = email;
+            var userWallet = UserWalletModel._userWallet.FirstOrDefault(x => x.Email == email);
+            var amnt = userWallet.BTC;
+            if (mloan.coin == "ETH")
+            {
+                amnt = userWallet.ETH;
+            }
+
+            if (mloan.amnt > amnt)
+            {
+                TempData["msg"] = "U Have Only : "+amnt+" "+mloan.coin;
+                return View(mloan);
+            }
+
+            //operate
+            if (mloan.coin == "ETH")
+            {
+                userWallet.ETH -= mloan.amnt;
+            }
+            else
+            {
+                userWallet.BTC -= mloan.amnt;
+            }
+            LoanModel._loans.Add(mloan);
+
+
+            return RedirectToAction("OrderHistory");
         }
-        public IActionResult Winners()
+        public IActionResult OrderHistory()
         {
-            return View(LotteryModel._winnerTicketAtEnd);
+            return View(LoanModel._loans.Where(x=>x.Email==User.Identity.Name).ToList());
         }
-        public IActionResult TicketsStatus()
+        public IActionResult OrderCancel(DateTime date)
         {
-            return View(LotteryModel._userTicket);
+            string email = User.Identity.Name;
+            var userWallet = UserWalletModel._userWallet.FirstOrDefault(x => x.Email == email);
+            var mloan = LoanModel._loans.FirstOrDefault(x => x.Email == email &&x.status=="Pending"&&x.date.ToString().Contains(date.ToString()));
+            //operate
+            if (mloan.coin == "ETH")
+            {
+                userWallet.ETH += mloan.amnt;
+            }
+            else
+            {
+                userWallet.BTC += mloan.amnt;
+            }
+            LoanModel._loans.Remove(mloan);
+            return RedirectToAction("OrderHistory");
+        }
+      
+        public IActionResult RepayLoan(DateTime date)
+        {
+            string email = User.Identity.Name;
+            var mloan = LoanModel._loans.FirstOrDefault(x => x.Email == email  && x.date.ToString().Contains(date.ToString()));
+
+            var userWallet = UserWalletModel._userWallet.FirstOrDefault(x => x.Email == email);
+            
+
+            if (mloan.rPay > userWallet.USD)
+            {
+                TempData["msg"] = "U Have Only : " + userWallet.USD + " USD";
+                return View("BorrowerForm", mloan);
+            }
+
+            //operate
+            userWallet.USD -= mloan.rPay;
+            var lenderWallet = UserWalletModel._userWallet.FirstOrDefault(x => x.Email == mloan.LenderEmail);
+            lenderWallet.USD += mloan.rPay;
+
+            if (mloan.coin == "ETH")
+            {
+                userWallet.ETH += mloan.amnt;
+            }
+            else
+            {
+                userWallet.BTC += mloan.amnt;
+            }
+            LoanModel._loans.Remove(mloan);
+
+
+            return RedirectToAction("OrderHistory");
+        }
+        public IActionResult LendUSD()
+        {
+            //return View(LoanModel._loans.Where(x => x.status == "Pending").ToList());
+            return View(LoanModel._loans.Where(x => x.status == "Pending"&&x.Email!=User.Identity.Name).ToList());
+        }
+        public IActionResult Lend(DateTime date)
+        {
+            string email = User.Identity.Name;
+            var mloan = LoanModel._loans.FirstOrDefault(x => x.status == "Pending" && x.date.ToString().Contains(date.ToString()));
+
+            var userWallet = UserWalletModel._userWallet.FirstOrDefault(x => x.Email == mloan.Email);
+            var lenderWallet = UserWalletModel._userWallet.FirstOrDefault(x => x.Email == email);
+
+
+            if (mloan.usd > lenderWallet.USD)
+            {
+                TempData["msg"] = "U Have Only : " + userWallet.USD + " USD";
+                return View("BorrowerForm", mloan);
+            }
+
+            //operate
+            lenderWallet.USD -= mloan.usd;
+            userWallet.USD += mloan.usd;
+            mloan.status = "Approved";
+            mloan.LenderEmail = email;
+           
+
+
+            return RedirectToAction("LendHistory");
+        }
+        public IActionResult LendHistory()
+        {
+            return View(LoanModel._loans.Where(x=>x.status=="Approved"&&x.LenderEmail==User.Identity.Name).ToList());
+        }
+        public IActionResult FailToRepay(DateTime date)
+        {
+            var mloan = LoanModel._loans.FirstOrDefault(x => x.date.ToString().Contains(date.ToString()));
+
+            var userWallet = UserWalletModel._userWallet.FirstOrDefault(x => x.Email == mloan.LenderEmail);
+
+
+            if (mloan.coin == "ETH")
+            {
+                userWallet.ETH += mloan.amnt;
+            }
+            else
+            {
+                userWallet.BTC += mloan.amnt;
+            }
+
+            //operate
+            LoanModel._loans.Remove(mloan);
+
+
+
+            return RedirectToAction("Index");
         }
     }
 }

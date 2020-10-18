@@ -90,11 +90,11 @@
                             <label for="exampleInputPassword1">
                                 Collateral Amount
                             </label>
-                            <input type="text" class="form-control" id="amnt" name="amnt" placeholder="Amount" readonly>
+                            <input type="text" class="form-control" id="amnt" name="amnt" placeholder="Amount" readonly required>
                         </div>
                         <div class="form-group">
                             <label for="exampleInputConfirmPassword1">Loan Term(days)</label>
-                            <input type="number" min="7" class="form-control" id="day" name="day" placeholder="How many Days" value="15">
+                            <input type="number" min="7" class="form-control" id="days" name="days" placeholder="How many Days" value="15">
                         </div>
 
                         <div class="form-group">
@@ -123,18 +123,29 @@
 
 
 <script>
+    $('#usd,#cRate,#coin').on('change', function () {
+        var coin = $('#coin').val();
+        if (coin == "ETH") {
+            coin = "ethereum";
+        } else {
+            coin = "bitcoin";
+        }
+        $.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=" + coin + "", function (data, status) {
+            console.log(data[0].current_price);
+            var price = data[0].current_price;
+            var val = 100-parseFloat($('#cRate').val());
+            val = val / 100;
+            var $val = parseFloat($('#usd').val());
+            var crypto = $val / price;
+            $('#amnt').val(crypto + (crypto * val));
+
+        });
+        
 
 
-    //$('#addrHolder').on('change',async function () {
-    //    var $this = $(this);
-    //    var addr = $this.val();
-    //    var val = await contract.balanceOf(addr);
-    //    val = parseInt(val.toString()) / 10 ** 18;
-    //    $('#blnc').val(val);
-    //})
+    })
 
-
-    $('#usd,#iRate').on('change keyup', function () {
+    $('#usd,#iRate').on('change', function () {
         var val = parseFloat($('#iRate').val());
         val = val / 100;
         var $val = parseFloat($('#usd').val());
@@ -147,9 +158,7 @@
 
 
     $(function () {
-
-        $('#feee').val(0.01);
-
+        
         //$('#addrHolder').change();
         //var totalCoins = totalCoin;
 
@@ -158,7 +167,7 @@
         //    console.log(totalCoin);
         //    return parseFloat(value + $('#feee').val()) <= parseFloat(totalCoin);
         //}, "Amount must be less than " + $(param).text());
-
+    //https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin //ethereum
 
         $.validator.addMethod('lessThanEqual', function(value, element, param) {
     if (this.optional(element)) return true;
@@ -174,7 +183,7 @@
                 rules: {
                     amnt: {
                         number: true,
-                        lessThanEqual: '#totalBlnc'
+                        //lessThanEqual: '#totalBlnc'
                     }
                 }
             });
