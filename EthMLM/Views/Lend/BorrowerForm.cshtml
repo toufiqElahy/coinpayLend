@@ -1,4 +1,4 @@
-
+@model UserWallet
 
 <div class="container-fluid">
     <div class="page-header">
@@ -68,7 +68,7 @@
                     @using (Html.BeginForm(FormMethod.Post, new { @class = "forms-sample" }))
                     {
                         <div style="color:red">@Html.Raw(TempData["msg"])</div>
-
+                        <input type="hidden" id="coinPrice" name="coinPrice"/>
                         <div class="form-group">
                             <label for="exampleInputEmail1">I want to borrow (USD)</label>
                             <input type="text" class="form-control" id="usd" name="usd" placeholder="How Many USD" required>
@@ -80,12 +80,7 @@
                                 <option value="ETH">ETH</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="exampleInputPassword1">
-                                Collateral Rate(5-25%)
-                            </label>
-                            <input type="number" min="5" max="25" class="form-control" id="cRate" name="cRate" placeholder="Collateral Rate(5-25%)" value="25">
-                        </div>
+                    
                         <div class="form-group">
                             <label for="exampleInputPassword1">
                                 Collateral Amount
@@ -99,15 +94,12 @@
 
                         <div class="form-group">
                             <label for="exampleInputPassword1">
-                                Interest Rate(%)
-                            </label>
-                            <input type="number" min="1" class="form-control" id="iRate" name="iRate" placeholder="Interest Rate(%)" value="3">
+                                Daily Interest Rate(%): @(LoanModel._dailyInterestRate*100)%
+                            </label><br />
+                            <label for="exampleInputPassword1">Repay Amount(USD): <b id="rpay">0</b> USD</label><br />
+                            <label id="cPrice"></label>
                         </div>
 
-                        <div class="form-group">
-                            <label for="exampleInputPassword1">Repay Amount(USD)</label>
-                            <input type="text" class="form-control" id="rpay" name="rpay" placeholder="" readonly="readonly">
-                        </div>
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
                     }
                 </div>
@@ -123,7 +115,11 @@
 
 
 <script>
-    $('#usd,#cRate,#coin').on('change', function () {
+    var BTC =@Model.BTC;
+    var ETH =@Model.ETH;
+    var allowance=@LoanModel._allowanceRate;
+
+    $('#usd,#coin').on('change', function () {
         var coin = $('#coin').val();
         if (coin == "ETH") {
             coin = "ethereum";
@@ -133,32 +129,35 @@
         $.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=" + coin + "", function (data, status) {
             console.log(data[0].current_price);
             var price = data[0].current_price;
-            var val = 100-parseFloat($('#cRate').val());
-            val = val / 100;
+            $('#coinPrice').val(price);
+            $('#cPrice').html(coin + ' price: ' + price);
+
             var $val = parseFloat($('#usd').val());
+            console.log($val);
             var crypto = $val / price;
-            $('#amnt').val(crypto + (crypto * val));
+            console.log(crypto);
+            $('#amnt').val(crypto*2);
 
         });
-        
+
 
 
     })
 
-    $('#usd,#iRate').on('change', function () {
-        var val = parseFloat($('#iRate').val());
-        val = val / 100;
+    $('#usd,#days').on('change', function () {
+        var days = parseInt($('#days').val());
+        var val = @LoanModel._dailyInterestRate * days;
         var $val = parseFloat($('#usd').val());
-        $('#rpay').val($val + ($val * val));
+        $('#rpay').html($val + ($val * val));
 
 
         })
 
-    
+
 
 
     $(function () {
-        
+
         //$('#addrHolder').change();
         //var totalCoins = totalCoin;
 
@@ -169,21 +168,27 @@
         //}, "Amount must be less than " + $(param).text());
     //https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin //ethereum
 
-        $.validator.addMethod('lessThanEqual', function(value, element, param) {
-    if (this.optional(element)) return true;
-            var i = parseFloat(value);
-            var j = parseFloat($(param).text());
-            i+=parseFloat($('#feee').val());
-            console.log(i + '   ' + j);
-            return i <= j;
-        }, "Amount must be less than Total (GVCH)Balance");
+        var maxCoin = 0;
+
+        $.validator.addMethod('allowance', function(value, param) {
+            var coin = $('#coin').val();
+            var allowd = allowance / 100;
+            if (coin == "ETH") {
+                maxCoin = ETH * allowd;
+            } else {
+                maxCoin = BTC * allowd;
+            }
+
+
+            return maxCoin > value;
+        }, "Maximum Allowance is @LoanModel._allowanceRate % of your coin Fund");
 
 
             $("form:last").validate({
                 rules: {
                     amnt: {
                         number: true,
-                        //lessThanEqual: '#totalBlnc'
+                        allowance: true
                     }
                 }
             });

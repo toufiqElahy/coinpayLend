@@ -2,9 +2,10 @@
   <MonoDevelop.Ide.ItemProperties.EthMLM PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="EthMLM/Controllers/LendController.cs" Line="23" Column="17" />
-      <File FileName="EthMLM/Views/Lend/Index.cshtml" Line="31" Column="30" />
-      <File FileName="EthMLM/Models/LoanModel.cs" Line="26" Column="1" />
+      <File FileName="EthMLM/Views/Lend/LiquidateUsers.cshtml" Line="56" Column="55" />
+      <File FileName="EthMLM/Controllers/LendController.cs" Line="148" Column="104" />
+      <File FileName="EthMLM/Models/LoanModel.cs" Line="1" Column="1" />
+      <File FileName="EthMLM/Views/Lend/Coinpay.cshtml" Line="111" Column="196" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -29,7 +30,10 @@
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/ela/Documents/coinpayLend/EthMLM/Controllers/LendController.cs" relfile="EthMLM/Controllers/LendController.cs" line="241" column="1" />
+      <Breakpoint file="/Users/ela/Documents/coinpayLend/EthMLM/Controllers/LendController.cs" relfile="EthMLM/Controllers/LendController.cs" line="244" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
 </Properties>
